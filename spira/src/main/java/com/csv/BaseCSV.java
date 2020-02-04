@@ -20,7 +20,7 @@ public abstract class BaseCSV implements CSV {
 
     @Override
     public List<List<String>> getRows() {
-        return null;
+        return _rows;
     }
 
     private String _filePath;

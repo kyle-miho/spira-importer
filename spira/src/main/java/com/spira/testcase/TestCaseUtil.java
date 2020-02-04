@@ -19,7 +19,8 @@ public class TestCaseUtil {
 
         TestCase testCase = new TestCase();
 
-        JSONObject params = _buildParams(folderId, name, description, type, status);
+        JSONObject params = _buildParams(folderId, name, description, testSteps, priority,
+                type, status);
 
         HttpResponse httpResponse =
                 SpiraUtil.postAPIRequest(
@@ -51,9 +52,9 @@ public class TestCaseUtil {
             throw new NullNameException();
         }
 
-        if (Validator.isNull(testSteps)) {
-            throw new Exception("testSteps must not be null or empty");
-        }
+        //if (Validator.isNull(testSteps)) {
+        //    throw new Exception("testSteps must not be null or empty");
+        //}
 
         if (folderId == 0) {
             throw new Exception("a testcase must have a folder attached to it, please set folderId");
@@ -63,8 +64,9 @@ public class TestCaseUtil {
     }
 
     private static JSONObject _buildParams(
-            int folderId, String name, String description, int type, int status)
-        throws Exception{
+            int folderId, String name, String description, String testSteps, int priority,
+            int type, int status)
+        throws Exception {
 
         JSONObject jsonObject =
             new JSONObject()
@@ -73,6 +75,11 @@ public class TestCaseUtil {
                 .put("TestCaseFolderId", Integer.toString(folderId))
                 .put("TestCaseTypeId", Integer.toString(type))
                 .put("TestCaseStatusId", Integer.toString(status));
+                //.put("TestSteps", testSteps);
+
+        if (priority != 0) {
+            jsonObject.put("TestCasePriorityId" , Integer.toString(priority));
+        }
 
         return jsonObject;
     }
