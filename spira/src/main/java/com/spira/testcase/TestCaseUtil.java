@@ -3,36 +3,36 @@ package com.spira.testcase;
 import com.constants.SpiraConstants;
 import com.exception.InvalidProjectIdException;
 import com.exception.NullNameException;
-import com.util.HttpUtil;
 import com.util.SpiraUtil;
 import com.util.Validator;
-import org.apache.http.HttpResponse;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class TestCaseUtil {
 
     public static TestCase addTestCase(int projectId, String name, String description,
-            String testSteps, int priority, int folderId, int status, int type)
+            String testSteps, int componentId,
+            int priorityId, int folderId, int status, int type)
         throws Exception {
 
         _validateTestCase(projectId, name, testSteps, folderId);
 
         TestCase testCase = new TestCase();
 
-        JSONObject params = _buildParams(folderId, name, description, testSteps, priority,
-                type, status);
+        JSONObject params = _buildParams(folderId, name, description, testSteps, componentId,
+                priorityId, type, status);
 
-        HttpResponse httpResponse =
-                SpiraUtil.postAPIRequest(
-                        _getAddEndPoint(projectId), params,"POST");
+        JSONObject jsonObject =
+                SpiraUtil.postAPIRequest(_getAddEndPoint(projectId), params);
 
-        HttpUtil.printHttpResponse(httpResponse);
+        String testCaseId = jsonObject.get("TestCaseId").toString();
 
         testCase.setName(name);
         testCase.setDescription(description);
+        testCase.setTestCaseId(Integer.valueOf(testCaseId));
         testCase.setTestSteps(testSteps);
         testCase.setProjectId(projectId);
-        testCase.setPriority(priority);
+        testCase.setPriority(priorityId);
         testCase.setFolderId(folderId);
         testCase.setStatus(status);
         testCase.setType(type);
@@ -64,9 +64,11 @@ public class TestCaseUtil {
     }
 
     private static JSONObject _buildParams(
-            int folderId, String name, String description, String testSteps, int priority,
-            int type, int status)
+            int folderId, String name, String description, String testSteps,
+            int componentId, int priorityId, int type, int status)
         throws Exception {
+
+        JSONArray componentIdArray = new JSONArray().put(Integer.toString(componentId));
 
         JSONObject jsonObject =
             new JSONObject()
@@ -77,8 +79,12 @@ public class TestCaseUtil {
                 .put("TestCaseStatusId", Integer.toString(status));
                 //.put("TestSteps", testSteps);
 
-        if (priority != 0) {
-            jsonObject.put("TestCasePriorityId" , Integer.toString(priority));
+        if (componentId != 0) {
+            jsonObject.put("ComponentIds" , componentIdArray);
+        }
+
+        if (priorityId != 0) {
+            jsonObject.put("TestCasePriorityId" , Integer.toString(priorityId));
         }
 
         return jsonObject;

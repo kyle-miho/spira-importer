@@ -1,14 +1,19 @@
 package com.csv;
 
 import com.constants.SpiraConstants;
-import com.constants.SpiraTestTypeConstants;
+import com.getter.SpiraTestTypeGetter;
 import com.constants.SpiraWorkflowConstants;
-import com.spira.testcase.TestCase;
+import com.getter.TestCasePriorityGetter;
+import com.spira.component.Component;
+import com.spira.component.ComponentUtil;
+import com.spira.project.Project;
+import com.spira.project.ProjectUtil;
 import com.spira.testcase.TestCaseUtil;
 import com.spira.testcase.folder.TestCaseFolder;
 import com.spira.testcase.folder.TestCaseFolderUtil;
+import com.spira.testcase.priority.TestCasePriority;
+import com.spira.testcase.priority.TestCasePriorityUtil;
 import com.util.Validator;
-import sun.security.provider.ConfigFile;
 
 import java.util.List;
 
@@ -33,16 +38,28 @@ public class CoreCSV extends BaseCSV {
         TestCaseFolder currentFolder = null;
         TestCaseFolder currentSubFolder = null;
 
+        Component currentComponent = null;
+
         for (List<String> row : getRows()) {
             if (row.get(0).equals("Component")) {
                 continue;
             }
 
             if (_isFolder(row)) {
+                String componentName = row.get(1);
+
                 currentFolder =
                     TestCaseFolderUtil.addTestCaseFolder(
                     SpiraConstants.PROJECT_ID, _rootTestCaseFolder.getFolderId(),
-                    row.get(1), "");
+                    componentName, "");
+
+                currentComponent =
+                    ComponentUtil.fetchComponent(SpiraConstants.PROJECT_ID, componentName);
+
+                if (currentComponent == null) {
+                    currentComponent =
+                        ComponentUtil.addComponent(SpiraConstants.PROJECT_ID, componentName);
+                }
             } else if (_isSubFolder(row)) {
                 currentSubFolder =
                         TestCaseFolderUtil.addTestCaseFolder(
@@ -51,8 +68,8 @@ public class CoreCSV extends BaseCSV {
             } else {
                 TestCaseUtil.addTestCase(SpiraConstants.PROJECT_ID,
                         row.get(TESTCASE_NAME), row.get(TESTCASE_DESCRIPTION),
-                        row.get(TESTCASE_STEPS), _buildPriority(row),
-                        currentSubFolder.getFolderId(), SpiraWorkflowConstants.APPROVED,
+                        row.get(TESTCASE_STEPS), currentComponent.getComponentId(),
+                        _buildPriorityId(row), currentSubFolder.getFolderId(), SpiraWorkflowConstants.APPROVED,
                         _getTestcaseType(row.get(TESTCASE_TYPE)));
             }
         }
@@ -60,30 +77,31 @@ public class CoreCSV extends BaseCSV {
         return;
     }
 
-    private int _buildPriority(List<String> row) {
-        String priorityString = row.get(6);
+    private int _buildPriorityId(List<String> row) throws Exception {
+        String priorityString = row.get(TESTCASE_PRIORITY);
 
-        int priority = 0;
+        int priorityId = 0;
 
         if (Validator.isNotNull(priorityString)) {
-            priority = Integer.valueOf(priorityString);
+           int priorityScore = Integer.valueOf(priorityString);
+
+            TestCasePriority testCasePriority =
+                    TestCasePriorityGetter.get(priorityScore);
+
+            priorityId = testCasePriority.getPriorityId();
         }
 
-        return priority;
+        return priorityId;
     }
 
     private int _getTestcaseType(String type) throws Exception {
-        if (type.equals("Functional")) {
-            return SpiraTestTypeConstants.FUNCTIONAL;
-        } else if (type.equals("Integration")) {
-            return SpiraTestTypeConstants.INTEGRATION;
-        } else if (type.equals("Manual")) {
-            return SpiraTestTypeConstants.EXPLORATORY;
-        } else if (type.equals("Unit")) {
-            return SpiraTestTypeConstants.UNIT;
-        } else {
-            throw new Exception("Invalid type");
+        String key = type;
+
+        if (type.equals("Manual")) {
+            key = "Exploratory";
         }
+
+        return Integer.valueOf(SpiraTestTypeGetter.get(key));
     }
 
     private boolean _isFolder(List<String> row) {

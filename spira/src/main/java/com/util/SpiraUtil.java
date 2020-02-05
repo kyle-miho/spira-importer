@@ -9,13 +9,42 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Map;
 
 public class SpiraUtil {
-    public static HttpResponse postAPIRequest(
-            String endPoint, JSONObject parameters, String requestType)
+    public static JSONObject getAPIRequestJSONObject(String endPoint) throws Exception {
+        HttpClient httpClient = HttpClientBuilder.create().build();
+
+        HttpGet httpGet = new HttpGet(endPoint);
+
+        _setBaseHeaders(httpGet);
+
+        System.out.println(httpGet.getAllHeaders().toString());
+
+        HttpResponse httpResponse = httpClient.execute(httpGet);
+
+        return HttpUtil.getJSONObject(httpResponse);
+    }
+
+    public static JSONArray getAPIRequest(String endPoint) throws Exception {
+        HttpClient httpClient = HttpClientBuilder.create().build();
+
+        HttpGet httpGet = new HttpGet(endPoint);
+
+        _setBaseHeaders(httpGet);
+
+        System.out.println(httpGet.getAllHeaders().toString());
+
+        HttpResponse httpResponse = httpClient.execute(httpGet);
+
+        return HttpUtil.getJSONArray(httpResponse);
+    }
+
+    public static JSONObject postAPIRequest(
+            String endPoint, JSONObject parameters)
         throws Exception {
 
         HttpClient httpClient = HttpClientBuilder.create().build();
@@ -26,9 +55,11 @@ public class SpiraUtil {
 
         _setEntity(parameters, httpPost);
 
-        System.out.println(httpPost.getAllHeaders());
+        System.out.println(httpPost.getAllHeaders().toString());
 
-        return httpClient.execute(httpPost);
+        HttpResponse httpResponse = httpClient.execute(httpPost);
+
+        return HttpUtil.getJSONObject(httpResponse);
     }
 
     private static void _setEntity(

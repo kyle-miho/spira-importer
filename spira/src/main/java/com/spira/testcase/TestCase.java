@@ -27,6 +27,10 @@ public class TestCase extends BaseModel {
         return _folderId;
     }
 
+    public int getTestCaseId() {
+        return _testCaseId;
+    }
+
     public int getType() {
         return _type;
     }
@@ -59,6 +63,10 @@ public class TestCase extends BaseModel {
         _status = status;
     }
 
+    public void setTestCaseId(int testCaseId) {
+        _testCaseId = testCaseId;
+    }
+
     public void setType(int type) {
         _type = type;
     }
@@ -69,5 +77,6 @@ public class TestCase extends BaseModel {
     private int _priority;
     private int _folderId;
     private int _status;
+    private int _testCaseId;
     private int _type;
 }

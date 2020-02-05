@@ -1,7 +1,7 @@
 package com.constants;
 
 public class SpiraConstants {
-    public static final String BASE_ENDPOINT = "https://liferay.spiraservice.net/services/v5_0/RestService.svc/";
+    public static final String BASE_ENDPOINT = "https://liferay.spiraservice.net/services/v6_0/RestService.svc/";
 
     public static final int PROJECT_ID = 29;
 

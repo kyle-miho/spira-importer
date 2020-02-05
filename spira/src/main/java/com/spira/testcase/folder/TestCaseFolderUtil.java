@@ -21,12 +21,9 @@ public class TestCaseFolderUtil {
         JSONObject params = _buildParams(
                 projectId, parentFolderId, name, description);
 
-        HttpResponse httpResponse =
-            SpiraUtil.postAPIRequest(
-                    _getAddEndPoint(projectId), params,"POST");
+        JSONObject jsonObject =
+            SpiraUtil.postAPIRequest(_getAddEndPoint(projectId), params);
 
-        String json = EntityUtils.toString(httpResponse.getEntity());
-        JSONObject jsonObject = new JSONObject(json);
         String testCaseFolderId = jsonObject.get("TestCaseFolderId").toString();
 
         TestCaseFolder testCaseFolder = new TestCaseFolder();
