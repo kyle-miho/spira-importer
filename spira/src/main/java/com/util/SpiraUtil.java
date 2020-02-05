@@ -22,8 +22,6 @@ public class SpiraUtil {
 
         _setBaseHeaders(httpGet);
 
-        System.out.println(httpGet.getAllHeaders().toString());
-
         HttpResponse httpResponse = httpClient.execute(httpGet);
 
         return HttpUtil.getJSONObject(httpResponse);
@@ -35,8 +33,6 @@ public class SpiraUtil {
         HttpGet httpGet = new HttpGet(endPoint);
 
         _setBaseHeaders(httpGet);
-
-        System.out.println(httpGet.getAllHeaders().toString());
 
         HttpResponse httpResponse = httpClient.execute(httpGet);
 
@@ -54,8 +50,6 @@ public class SpiraUtil {
         _setBaseHeaders(httpPost);
 
         _setEntity(parameters, httpPost);
-
-        System.out.println(httpPost.getAllHeaders().toString());
 
         HttpResponse httpResponse = httpClient.execute(httpPost);
 

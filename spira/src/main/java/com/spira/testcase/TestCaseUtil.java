@@ -3,6 +3,7 @@ package com.spira.testcase;
 import com.constants.SpiraConstants;
 import com.exception.InvalidProjectIdException;
 import com.exception.NullNameException;
+import com.getter.UserGetter;
 import com.util.SpiraUtil;
 import com.util.Validator;
 import org.json.JSONArray;
@@ -17,8 +18,6 @@ public class TestCaseUtil {
 
         _validateTestCase(projectId, name, testSteps, folderId);
 
-        TestCase testCase = new TestCase();
-
         JSONObject params = _buildParams(folderId, name, description, testSteps, componentId,
                 priorityId, type, status);
 
@@ -26,6 +25,8 @@ public class TestCaseUtil {
                 SpiraUtil.postAPIRequest(_getAddEndPoint(projectId), params);
 
         String testCaseId = jsonObject.get("TestCaseId").toString();
+
+        TestCase testCase = new TestCase();
 
         testCase.setName(name);
         testCase.setDescription(description);
@@ -52,10 +53,6 @@ public class TestCaseUtil {
             throw new NullNameException();
         }
 
-        //if (Validator.isNull(testSteps)) {
-        //    throw new Exception("testSteps must not be null or empty");
-        //}
-
         if (folderId == 0) {
             throw new Exception("a testcase must have a folder attached to it, please set folderId");
         }
@@ -76,8 +73,8 @@ public class TestCaseUtil {
                 .put("Name", name)
                 .put("TestCaseFolderId", Integer.toString(folderId))
                 .put("TestCaseTypeId", Integer.toString(type))
-                .put("TestCaseStatusId", Integer.toString(status));
-                //.put("TestSteps", testSteps);
+                .put("TestCaseStatusId", Integer.toString(status))
+                .put("OwnerId", UserGetter.getCurrentUser().getUserId());
 
         if (componentId != 0) {
             jsonObject.put("ComponentIds" , componentIdArray);

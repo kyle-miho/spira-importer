@@ -1,6 +1,7 @@
 package com.csv;
 
 import com.constants.SpiraConstants;
+import com.csv.parser.TestStepParser;
 import com.getter.SpiraTestTypeGetter;
 import com.constants.SpiraWorkflowConstants;
 import com.getter.TestCasePriorityGetter;
@@ -8,11 +9,13 @@ import com.spira.component.Component;
 import com.spira.component.ComponentUtil;
 import com.spira.project.Project;
 import com.spira.project.ProjectUtil;
+import com.spira.testcase.TestCase;
 import com.spira.testcase.TestCaseUtil;
 import com.spira.testcase.folder.TestCaseFolder;
 import com.spira.testcase.folder.TestCaseFolderUtil;
 import com.spira.testcase.priority.TestCasePriority;
 import com.spira.testcase.priority.TestCasePriorityUtil;
+import com.util.SpiraUtil;
 import com.util.Validator;
 
 import java.util.List;
@@ -48,6 +51,8 @@ public class CoreCSV extends BaseCSV {
             if (_isFolder(row)) {
                 String componentName = row.get(1);
 
+                System.out.println("Working on component: " + componentName);
+
                 currentFolder =
                     TestCaseFolderUtil.addTestCaseFolder(
                     SpiraConstants.PROJECT_ID, _rootTestCaseFolder.getFolderId(),
@@ -66,11 +71,16 @@ public class CoreCSV extends BaseCSV {
                                 SpiraConstants.PROJECT_ID, currentFolder.getFolderId(),
                                 row.get(2), "");
             } else {
-                TestCaseUtil.addTestCase(SpiraConstants.PROJECT_ID,
+                TestCase testCase =
+                    TestCaseUtil.addTestCase(SpiraConstants.PROJECT_ID,
                         row.get(TESTCASE_NAME), row.get(TESTCASE_DESCRIPTION),
                         row.get(TESTCASE_STEPS), currentComponent.getComponentId(),
                         _buildPriorityId(row), currentSubFolder.getFolderId(), SpiraWorkflowConstants.APPROVED,
                         _getTestcaseType(row.get(TESTCASE_TYPE)));
+
+                TestStepParser.createTestSteps(
+                    SpiraConstants.PROJECT_ID, row.get(TESTCASE_STEPS),
+                        testCase.getTestCaseId());
             }
         }
 
