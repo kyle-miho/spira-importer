@@ -39,7 +39,7 @@ public class TestStepParser {
         //used to get last match, wont affect string
         testSteps += "1. ";
 
-        Pattern pattern = Pattern.compile("\\d+\\.\\s(.|\\n)*?(?=\\d+\\.\\s)");
+        Pattern pattern = _getPlainTextParserPattern();
 
         Matcher matcher = pattern.matcher(testSteps);
 
@@ -52,5 +52,15 @@ public class TestStepParser {
         return matches;
 
     }
+
+    private static Pattern _getPlainTextParserPattern() {
+        if (_plainTextParserPattern == null) {
+            _plainTextParserPattern = Pattern.compile("\\d+\\.\\s(.|\\n)*?(?=\\d+\\.\\s)");
+        }
+
+        return _plainTextParserPattern;
+    }
+
+    private static Pattern _plainTextParserPattern;
 
 }
