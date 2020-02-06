@@ -1,7 +1,5 @@
 package com.getter;
 
-import com.constants.SpiraConstants;
-import com.spira.project.ProjectUtil;
 import com.spira.user.User;
 import com.spira.user.UserUtil;
 

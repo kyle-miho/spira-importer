@@ -1,26 +1,85 @@
 Component,Component,Test Case,TC Identifier,Test Type,Estimated Duration (min),Priority,Pass/Fail,LPS Ticket,Tester,Date,Test Name,Test Steps
 Bundle Blacklist,Bundle Blacklist,,,,,,,,,,,
 Bundle Blacklist,,Test Group 1 - Blacklisting Modules,,,,,,,,,,
-Bundle Blacklist,,Add LPKGs module to Blacklist through System Setting (UI),1a,Functional,,5,,,,,BundleBlacklist#BlacklistModuleLPKG,"1) Start up a clean Liferay portal bundle (You may want to generate lpkg for the module you want to blacklist if you are not using the release bundle.)
-2) Go to [Liferay_home]/osgi/marketplace
-3) Find  the LPKG that will be added to the blacklist
-4) Get “App title"" from the name of the the LPKG file  
-5) Go to Control Panel > Configuration > System Settings > Module Container > Bundle Blacklist
-6) Enter App title into blacklist symbolic name field
-7) Save 
-8) Verify the module is blacklisted in the console 
-9) Assert module is STOPPED in the console
-"
-Bundle Blacklist,,Add module JARs to Blacklist through System Setting (UI),1b,Functional,,5,,,,,BundleBlacklist#BlacklistModuleJar,
-Bundle Blacklist,,Add WARs file to Blacklist through System Setting (UI),1c,Functional,,4,,,,,BundleBlacklist#BlacklistModuleWar,
-Bundle Blacklist,,Remove module from the blacklist through System Settings (UI),1d,Functional,,5,,,,,BundleBlacklist#RemoveModuleFromBlacklist,
-Bundle Blacklist,,Add module to blacklist through OSGi config file at runtime,1e,Manual,,5,,,,,https://issues.liferay.com/browse/LRQA-53831,
-Bundle Blacklist,,Remove module from the blacklist through OSGi config file at runtime,1f,Manual,,5,,,,,https://issues.liferay.com/browse/LRQA-53832,
-Bundle Blacklist,,Add and remove module between restarts,1g,Integration,-,4,,,,,BundleBlacklistTest#testAddToAndRemoveFromBlacklist,
-Bundle Blacklist,,Delete configuration file from the OSGi configs folder at runtime,1h,Manual,,4,,,,,https://issues.liferay.com/browse/LRQA-53833,
-Bundle Blacklist,,Shutdown and delete configuration file from the OSGi configs folder,1i,Integration,-,4,,,,,BundleBlacklistVerifyReinstalledTest,
-Bundle Blacklist,,Export bundle blacklist config file into OSGi configs folder,1j,Manual,,4,,,,,https://issues.liferay.com/browse/LRQA-53834,
-Bundle Blacklist,,Reinstall all blacklisted modules,1k,Manual,,3,,,,,,
+Bundle Blacklist,,Add LPKGs module to Blacklist through System Setting (UI),1a,Functional,,5,,,,,BundleBlacklist#BlacklistModuleLPKG,"1. Start up a clean Liferay portal bundle (You may want to generate lpkg for the module you want to blacklist if you are not using the release bundle.)
+2. Go to [Liferay_home]/osgi/marketplace
+3. Find  the LPKG that will be added to the blacklist 
+4. Get “App title"" from the name of the the LPKG file  
+5. Go to Control Panel > Configuration > System Settings > Module Container > Bundle Blacklist
+6. Enter App title into blacklist symbolic name field
+7. Save
+8. Verify the module is blacklisted in the console 
+9. Assert module is STOPPED in the console"
+Bundle Blacklist,,Add module JARs to Blacklist through System Setting (UI),1b,Functional,,5,,,,,BundleBlacklist#BlacklistModuleJar,"1. Start up a clean Liferay portal bundle
+2. Go to [Liferay_home]/osgi/modules 
+3. Find  the module jar that will be added to the blacklist
+4. Open and find Bundle-SymbolicName in bnd.bnd or MANIFEST.MF file
+5. Copy the bundle symbolic name
+6. Go to Control Panel > Configuration > System Settings > Module Container > Bundle Blacklist
+7. Enter Bundle-SymbolicName into blacklist symbolic name field
+8. Save
+9. Verify the module is blacklisted in the console
+10. Assert module is STOPPED in the console"
+Bundle Blacklist,,Add WARs file to Blacklist through System Setting (UI),1c,Functional,,4,,,,,BundleBlacklist#BlacklistModuleWar,"1. Start up a clean Liferay portal bundle
+2. Get the WAR file  that will be added to the blacklist
+3. Open and find Servlet context name in liferay-plugin-package.properties file 
+4. Copy the  Servlet context name
+5. Go to Control Panel > Configuration > System Settings > Module Container > Bundle Blacklist
+6. Enter  Servlet context name or WAR file name (minus .war) into blacklist symbolic name field if there is no servlet context name property
+7. Save
+8. Verify the module is blacklisted in the console
+9. Assert module is STOPPED in the console"
+Bundle Blacklist,,Remove module from the blacklist through System Settings (UI),1d,Functional,,5,,,,,BundleBlacklist#RemoveModuleFromBlacklist,"1. Go to  Control Panel > Configuration > System Settings > Module Container > Bundle Blacklist
+2. Enter bundle symbolic name in the name field
+3. Save bundle blacklist configuration
+4. Verify the module is blacklisted in the console (uninstalled)
+5. Go to  Control Panel > Configuration > System Settings > Module Container > Bundle Blacklist
+6. Remove module from blacklist
+7. Verify the module is not blacklisted in the console (reinstalled)
+8. Assert module is Reinstalling bundle in the console
+9. Assert module is STARTED in the console
+
+
+        Note: The module(s) will be blacklisted again on future restart as this is a temporarily change"
+Bundle Blacklist,,Add module to blacklist through OSGi config file at runtime,1e,Manual,,5,,,,,https://issues.liferay.com/browse/LRQA-53831,"1. Start the portal server
+2. Go to [liferay_home]/osgi/configs
+3. Create config file:
+com.liferay.portal.bundle.blacklist.internal.BundleBlacklistConfiguration.config
+4. Open the configuration file: com.liferay.portal.bundle.blacklist.internal.BundleBlacklistConfiguration.config
+5. Add the bundle symbolic names of any modules that you want to blacklist
+6. Save the config file
+7. Verify the module is blacklisted in the console (uninstalled)
+8. Assert module is STOPPED in the console"
+Bundle Blacklist,,Remove module from the blacklist through OSGi config file at runtime,1f,Manual,,5,,,,,https://issues.liferay.com/browse/LRQA-53832,"1. Execute 1e
+2. Remove the symbolic names of the module(s) you want to install from the blacklist config file
+3. Save the configuration
+4. Verify the module is not blacklisted in the console (reinstalled)
+5. Assert module is Reinstalling bundle in the console
+6. Assert module is STARTED in the console"
+Bundle Blacklist,,Add and remove module between restarts,1g,Integration,-,4,,,,,BundleBlacklistTest#testAddToAndRemoveFromBlacklist,1. Execute 1e and 1f with the server shutdown during the adding and removing of the blacklist config file
+Bundle Blacklist,,Delete configuration file from the OSGi configs folder at runtime,1h,Manual,,4,,,,,https://issues.liferay.com/browse/LRQA-53833,"1. Execute 1e
+2. Delete configuration file from 1e
+3. Verify the modules are not blacklisted in the console (reinstalled)
+4. Assert module is Reinstalling bundle in the console
+5. Assert module is STARTED in the console"
+Bundle Blacklist,,Shutdown and delete configuration file from the OSGi configs folder,1i,Integration,-,4,,,,,BundleBlacklistVerifyReinstalledTest,"1. Execute 1e
+2. Shutdown the liferay portal server
+3. Delete configuration file from 1e
+4. Restart the liferay portal server
+5. Verify the modules are not blacklisted in the console (reinstalled)
+6. Assert module is Reinstalling bundle in the console
+7. Assert module is STARTED in the console"
+Bundle Blacklist,,Export bundle blacklist config file into OSGi configs folder,1j,Manual,,4,,,,,https://issues.liferay.com/browse/LRQA-53834,"1. Execute steps 1d (1 - 4) 
+2. Export: com.liferay.portal.bundle.blacklist.internal.BundleBlacklistConfiguration.config
+3. Assert configuration file is exported
+4. Copy into [liferay_home]/osgi/configs: com.liferay.portal.bundle.blacklist.internal.BundleBlacklistConfiguration.config
+5. Verify the module is still blacklisted in the console
+6. Assert module is STOPPED in the console"
+Bundle Blacklist,,Reinstall all blacklisted modules,1k,Manual,,3,,,,,,"1. Execute steps 1d (1 - 4)
+2. Go to Control Panel > App Manager
+3. Search for “com.liferay.portal.bundle.blacklist” and uninstall
+4. Assert all the blacklisted modules are reinstalled
+5. Assert no console log error"
 Bundle Blacklist,,Test Group 2 - Blacklisting Components,,,,,,,,,,
 Bundle Blacklist,,Add component to blacklist through System Settings (UI),2a,Functional,,4,,,,,BundleBlacklist#BlacklistComponent,
 Bundle Blacklist,,Remove component from the blacklist through System Settings (UI),2b,Manual,,3,,,,,,
@@ -153,12 +212,12 @@ DB Upgrade Client,,Upgrade with standalone Upgrade client,7a,Functional,-,4,,,,,
 DB Upgrade Client,,Upgrade with build-in Upgrade client,7b,Functional,-,5,,,,,PortalSmokeUpgrade.testcase,
 DL Stores,DL Stores,,,,,,,,,,,
 DL Stores,,Test Group 1 - Local Document Library Store,,,,,,,,,,
-DL Stores,,Test case 1a - Advanced File System Store,1a,Functional,,,,,,,DocumentLibraryStore#AdvancedFileSystemStoreSmoke,
-DL Stores,,Test case 1b - DBStore,1b,Functional,,,,,,,DocumentLibraryStore#DBStoreSmoke,
-DL Stores,,Test case 1c - File System Store,1c,Functional,,,,,,,DocumentLibraryStore#FileSystemStoreSmoke,
+DL Stores,,Advanced File System Store,1a,Functional,,,,,,,DocumentLibraryStore#AdvancedFileSystemStoreSmoke,
+DL Stores,,DBStore,1b,Functional,,,,,,,DocumentLibraryStore#DBStoreSmoke,
+DL Stores,,File System Store,1c,Functional,,,,,,,DocumentLibraryStore#FileSystemStoreSmoke,
 DL Stores,,Test Group 2 - Cloud Stores,,,,,,,,,,
-DL Stores,,Test case 2a - Amazon S3 Store,2a,Manual,,3,,,,,,
-DL Stores,,Test case 2b - Google Cloud Store (LPS-89224),2b,Manual,,3,,,,,,
+DL Stores,,Amazon S3 Store,2a,Manual,,3,,,,,,
+DL Stores,,Google Cloud Store (LPS-89224),2b,Manual,,3,,,,,,
 Friendly URL,Friendly URL,,,,,,,,,,,
 Friendly URL,,Test Group 1 - Smoke Test Friendly URL,,,,,,,,,,
 Friendly URL,,Add Friendly URL,1a,Manual,,3,,,,,,
@@ -185,18 +244,18 @@ Friendly URL,,Test Group 6 - High Priority SEO,,,,,,,,,,
 Friendly URL,,Verify canonical url when using a localized friendlyURL,6a,Functional,,5,,,,,FriendlyURL#ViewCanonicalURLWithLocalizedFriendlyURL,
 Gogo Shell,Gogo Shell,,,,,,,,,,,
 Gogo Shell,,Test Group 1 - Gogo Shell Access (Terminal),,,,,,,,,,
-Gogo Shell,,Test case 1a - No default access to gogo shell,1a,Functional,,5,,,,,ant > no-default-access-to-gogo-shell-command,
-Gogo Shell,,Test case 1b - Access gogo shell command,1b,Functional,,5,,,,,ant > enable-access-to-gogo-shell-command,
+Gogo Shell,, No default access to gogo shell,1a,Functional,,5,,,,,ant > no-default-access-to-gogo-shell-command,
+Gogo Shell,,Access gogo shell command,1b,Functional,,5,,,,,ant > enable-access-to-gogo-shell-command,
 Gogo Shell,,Test Group 2 - Gogo Shell Access (UI),,,,,,,,,,
-Gogo Shell,,Test case 2a - Access gogo shell command via portlet,2a,Functional,,5,,,,,Gogoshell#AccessGogoShellCommandViaPortlet,
-Gogo Shell,,Test case 2b - Site Admin cannot access Gogo Shell,2b,Functional,,4,,,,,Gogoshell#SiteAdminCannotAccessGogoShellPortlet,
-Gogo Shell,,Test case 2c - OmniAdmin can access Gogo Shell (LPS-101101),2c,Functional,,4,,,,,Gogoshell#OmniAdminCanAccessGogoShellCommandViaPortlet,
-Gogo Shell,,Test case 23 - Output only displays in UI (LPS-92669),2d,Manual,,3,,,,,,
-Gogo Shell,,Test case 2e - Gogo shell portlet only on main instance (LPS-88256),2e,Functional,,4,,,,,Gogoshell#GogoShellPortletOnlyOnMainInstance,
-Gogo Shell,,Test case 2f - Concurrent connections,2f,Manual,,4,,,,,https://issues.liferay.com/browse/LRQA-53803,
-Gogo Shell,,Test case 2g - Disconnect command is not supported (LPS-83660),2g,Manual,,4,,,,,https://issues.liferay.com/browse/LRQA-53804,
-Gogo Shell,,Test Group 3 - Cluster,,,,,,,,,,
-Gogo Shell,,Test case 3a - Gogo Shell session attributes never replicate across cluster (LPS-89651),3a,Manual,,3,,,,,,
+Gogo Shell,,Access gogo shell command via portlet,2a,Functional,,5,,,,,Gogoshell#AccessGogoShellCommandViaPortlet,
+Gogo Shell,,Site Admin cannot access Gogo Shell,2b,Functional,,4,,,,,Gogoshell#SiteAdminCannotAccessGogoShellPortlet,
+Gogo Shell,,OmniAdmin can access Gogo Shell (LPS-101101),2c,Functional,,4,,,,,Gogoshell#OmniAdminCanAccessGogoShellCommandViaPortlet,
+Gogo Shell,,Output only displays in UI (LPS-92669),2d,Manual,,3,,,,,,
+Gogo Shell,,Gogo shell portlet only on main instance (LPS-88256),2e,Functional,,4,,,,,Gogoshell#GogoShellPortletOnlyOnMainInstance,
+Gogo Shell,,Concurrent connections,2f,Manual,,4,,,,,https://issues.liferay.com/browse/LRQA-53803,
+Gogo Shell,,Disconnect command is not supported (LPS-83660),2g,Manual,,4,,,,,https://issues.liferay.com/browse/LRQA-53804,
+Gogo Shell,,,,,,,,,,,,
+Gogo Shell,,Gogo Shell session attributes never replicate across cluster (LPS-89651),3a,Manual,,3,,,,,,
 IPV6,IPV6,,,,,,,,,,,
 IPV6,,Test Group 1 - IPV6 Configuration,,,,,,,,,,
 IPV6,,Configure Liferay bundle to run portal on IPV6,1a,Functional,,5,,,,,IPAddress#RunPortalOnIPV6,

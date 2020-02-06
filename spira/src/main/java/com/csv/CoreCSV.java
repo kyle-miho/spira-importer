@@ -71,9 +71,11 @@ public class CoreCSV extends BaseCSV {
                                 SpiraConstants.PROJECT_ID, currentFolder.getFolderId(),
                                 row.get(2), "");
             } else {
+                String name =
+                     "TestCase " + row.get(TESTCASE_IDENTIFIER)+ " - " + row.get(TESTCASE_NAME);
                 TestCase testCase =
                     TestCaseUtil.addTestCase(SpiraConstants.PROJECT_ID,
-                        row.get(TESTCASE_NAME), row.get(TESTCASE_DESCRIPTION),
+                       name, row.get(TESTCASE_DESCRIPTION),
                         row.get(TESTCASE_STEPS), currentComponent.getComponentId(),
                         _buildPriorityId(row), currentSubFolder.getFolderId(), SpiraWorkflowConstants.APPROVED,
                         _getTestcaseType(row.get(TESTCASE_TYPE)));
@@ -143,6 +145,7 @@ public class CoreCSV extends BaseCSV {
     }
 
     private static final int TESTCASE_NAME = 2;
+    private static final int TESTCASE_IDENTIFIER = 3;
     private static final int TESTCASE_TYPE = 4;
     private static final int TESTCASE_PRIORITY = 6;
     private static final int TESTCASE_DESCRIPTION = 11;
