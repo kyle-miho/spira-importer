@@ -5,6 +5,7 @@ import com.csv.parser.TestStepParser;
 import com.getter.SpiraTestTypeGetter;
 import com.constants.SpiraWorkflowConstants;
 import com.getter.TestCasePriorityGetter;
+import com.metrics.APICallCounter;
 import com.spira.component.Component;
 import com.spira.component.ComponentUtil;
 import com.spira.project.Project;
@@ -53,6 +54,8 @@ public class CoreCSV extends BaseCSV {
 
                 System.out.println("Working on component: " + componentName);
 
+                System.out.println("Current total API calls: " + APICallCounter.get());
+
                 currentFolder =
                     TestCaseFolderUtil.addTestCaseFolder(
                     SpiraConstants.PROJECT_ID, _rootTestCaseFolder.getFolderId(),
@@ -66,16 +69,19 @@ public class CoreCSV extends BaseCSV {
                         ComponentUtil.addComponent(SpiraConstants.PROJECT_ID, componentName);
                 }
             } else if (_isSubFolder(row)) {
+                System.out.println("Working on TestGroup: " + row.get(2));
+
                 currentSubFolder =
                         TestCaseFolderUtil.addTestCaseFolder(
                                 SpiraConstants.PROJECT_ID, currentFolder.getFolderId(),
                                 row.get(2), "");
             } else {
                 String name =
-                     "TestCase " + row.get(TESTCASE_IDENTIFIER)+ " - " + row.get(TESTCASE_NAME);
+                    "TestCase " + row.get(TESTCASE_IDENTIFIER)+ " - " + row.get(TESTCASE_NAME);
+
                 TestCase testCase =
                     TestCaseUtil.addTestCase(SpiraConstants.PROJECT_ID,
-                       name, row.get(TESTCASE_DESCRIPTION),
+                        name, row.get(TESTCASE_DESCRIPTION),
                         row.get(TESTCASE_STEPS), currentComponent.getComponentId(),
                         _buildPriorityId(row), currentSubFolder.getFolderId(), SpiraWorkflowConstants.APPROVED,
                         _getTestcaseType(row.get(TESTCASE_TYPE)));

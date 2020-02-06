@@ -1,6 +1,7 @@
 package com.util;
 
 import com.constants.SpiraConstants;
+import com.metrics.APICallCounter;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -24,6 +25,8 @@ public class SpiraUtil {
 
         HttpResponse httpResponse = httpClient.execute(httpGet);
 
+        APICallCounter.addCall();
+
         return HttpUtil.getJSONObject(httpResponse);
     }
 
@@ -35,6 +38,8 @@ public class SpiraUtil {
         _setBaseHeaders(httpGet);
 
         HttpResponse httpResponse = httpClient.execute(httpGet);
+
+        APICallCounter.addCall();
 
         return HttpUtil.getJSONArray(httpResponse);
     }
@@ -52,6 +57,8 @@ public class SpiraUtil {
         _setEntity(parameters, httpPost);
 
         HttpResponse httpResponse = httpClient.execute(httpPost);
+
+        APICallCounter.addCall();
 
         return HttpUtil.getJSONObject(httpResponse);
     }
